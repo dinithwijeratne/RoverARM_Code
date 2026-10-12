@@ -15,7 +15,7 @@ This arm mounts to the top of a provided rover chassis via a 3" square, 4x M5 bo
   - Joint 4 — Servo + bearing
   - End effector: rubber gripper (passive/servo-actuated — update once finalized)
 
-## Key Requirements (from IDD / Mission Guide)
+## Key Requirements (from Mission Guide)
 
 | Requirement | Spec |
 |---|---|
