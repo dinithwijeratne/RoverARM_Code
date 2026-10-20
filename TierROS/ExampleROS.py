@@ -13,36 +13,40 @@
 # limitations under the License.
 
 import rclpy
+from rclpy.node import Node
 
-from std_msgs.msg import UInt8MultiArray 
+from std_msgs.msg import UInt8MultiArray
+
+
+class MinimalPublisher(Node):
+
+    def __init__(self):
+        super().__init__('minimal_publisher')
+        self.publisher_ = self.create_publisher(UInt8MultiArray, '/serial_write', 10)
+        timer_period = 0.5  # seconds
+        self.timer = self.create_timer(timer_period, self.timer_callback)
+        self.i = 0
+
+    def timer_callback(self):
+        msg = UInt8MultiArray()
+        command = "A,0,0,0,0,0,0\n"
+        msg.data = command.encode("ascii")
+        self.publisher_.publish(msg)
+        self.get_logger().info('Publishing: "%s"' % msg.data)
+        self.i += 1
 
 
 def main(args=None):
     rclpy.init(args=args)
 
-    node = rclpy.create_node('minimal_publisher')
-    publisher = node.create_publisher(UInt8MultiArray, '/serial_write', 10)
+    minimal_publisher = MinimalPublisher()
 
-    msg = UInt8MultiArray()
-    command = "M,0,0,0,0,0,0\n"
-    
+    rclpy.spin(minimal_publisher)
 
-    def timer_callback():
-        msg.data = command.encode("ascii")
-
-        node.get_logger().info(msg.data)
-        publisher.publish(msg)
-
-    timer_period = 0.5  # seconds
-    timer = node.create_timer(timer_period, timer_callback)
-
-    rclpy.spin(node)
-
-    # Destroy the timer attached to the node explicitly
+    # Destroy the node explicitly
     # (optional - otherwise it will be done automatically
     # when the garbage collector destroys the node object)
-    node.destroy_timer(timer)
-    node.destroy_node()
+    minimal_publisher.destroy_node()
     rclpy.shutdown()
 
 
