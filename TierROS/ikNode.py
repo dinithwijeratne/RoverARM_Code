@@ -5,8 +5,8 @@ from matplotlib.widgets import Button
 import time 
 import serial 
 import math as ma
-import rlcpy 
-
+import rclpy 
+from rclpy.node import Node 
 from std_msgs.msg import UInt8MultiArray  
 
 SERIAL_PORT = "/dev/cu.usbmodem11201"  
@@ -22,30 +22,31 @@ l_1 = 4.764
 l_2 = 4.773
 fixed = np.array([0.0, 0.0])
 
-a = 0.05
+a = 0.02
 l_a = 0.05
 
 pico = None
-offset_residual_deg = np.zeros(2, dtype=float)
 
 
-def send_joint_offsets(delta_theta):
-    rclpy.init(args=args)
+class MinimalPublisher(Node):
 
-    node = rclpy.create_node('minimal_publisher')
-    publisher = node.create_publisher(UInt8MultiArray, 'topic', 10)
+    def __init__(self):
+        super().__init__('minimal_publisher')
+        self.publisher_ = self.create_publisher(UInt8MultiArray, '/serial_write', 10)
 
-    msg = UInt8MultiArray() 
+    def send_joint_offsets(self, absolute):
+        msg = UInt8MultiArray() 
 
-    delta_deg = np.degrees(np.asarray(delta_theta, dtype=float))
-    offsets = np.rint(delta_deg).astype(int) # Rounds the interger cause we can't all that 
-    command = f"M,0,0,{offsets[0]},{offsets[1]},0,0\n"
-    msg.data = command.encode("ascii")
+        delta_deg = np.degrees(np.asarray(absolute, dtype=float))
+        offsets = np.rint(delta_deg).astype(int) # Rounds the interger cause w`e can't all that 
+        command = f"A,0,0,{offsets[0]},{offsets[1]},0,0\n"
+        msg.data = command.encode("ascii")
 
-    node.get_logger().info(msg.data)
-    publisher.publish(msg)
-    print(msg.data)
-    rclpy.spin(node)
+        self.get_logger().info(msg.data)
+        self.publisher_.publish(msg)
+        
+        
+
 
 
 def plotAngle(angles):
@@ -94,7 +95,7 @@ def main():
     fig.canvas.mpl_connect("key_release_event", key_release)
 
     def update(frame):
-        nonlocal jointAngles
+        nonlocal jointAngles, minimal_publisher
 
         if '1' in keys:
             target[1] += step
@@ -122,7 +123,9 @@ def main():
         ])
         deltaAngle = (j.T @ np.linalg.inv(j @ j.T + (l_a ** 2) * np.identity(2))) @ (a * err)
         jointAngles += deltaAngle
-        send_joint_offsets(jointAngles)
+        
+        minimal_publisher.send_joint_offsets(jointAngles)
+        rclpy.spin_once(minimal_publisher)
         # Update arm plot
         x_3, y_3, x_4, y_4 = plotAngle(jointAngles)
         arm.set_data([0, x_3, x_4], [0, y_3, y_4])
@@ -140,10 +143,13 @@ def main():
         button.label.set_text("Running")
         ani = FuncAnimation(fig, update, frames=3000, interval=40, repeat=False)
         fig.canvas.draw_idle()
-
+    rclpy.init(args=None)
+    
+    minimal_publisher = MinimalPublisher()
     button_ax = fig.add_axes([0.4, 0.03, 0.2, 0.06])
     button = Button(button_ax, "Button")
     button.on_clicked(start)
+
     plt.show()
 
 
