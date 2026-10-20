@@ -44,6 +44,7 @@ void setup() {
   while (!Serial) {
     delay(10);
   }
+  
   SPI.begin();
 
   if (!SD.begin(SD_CS)) {
@@ -192,7 +193,7 @@ String readSensors() {
   float ay = accelerometerData.acceleration.y;
   float az = accelerometerData.acceleration.z;
   float temp = bmp.temperature; 
-  float pressure = bmp.pressure
+  float pressure = bmp.pressure;
   float altitude = bmp.readAltitude(SEALEVELPRESSURE_HPA); 
 
   data = String(millis()) + "," + String(ox) + "," + String(oy) + "," + String(oz) +"," + String(ax) + "," + String(ay) + "," + String(az) + "," + String(temp) + "," + String(pressure) +"," + String(altitude);
