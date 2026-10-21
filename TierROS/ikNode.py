@@ -2,16 +2,11 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 from matplotlib.widgets import Button
-import time 
-import serial 
 import math as ma
 import rclpy 
 from rclpy.node import Node 
 from std_msgs.msg import UInt8MultiArray  
-
-SERIAL_PORT = "/dev/cu.usbmodem11201"  
-BAUD_RATE = 115200
-UPDATE_INTERVAL_MS = 40               
+    
 
 s1d = 1
 s2d = 1 
@@ -41,8 +36,8 @@ class MinimalPublisher(Node):
         offsets = np.rint(delta_deg).astype(int) # Rounds the interger cause w`e can't all that 
         command = f"A,0,0,{offsets[0]},{offsets[1]},0,0\n"
         msg.data = command.encode("ascii")
-
-        self.get_logger().info(msg.data)
+        
+        self.get_logger().info(command)
         self.publisher_.publish(msg)
         
         
@@ -125,7 +120,7 @@ def main():
         jointAngles += deltaAngle
         
         minimal_publisher.send_joint_offsets(jointAngles)
-        rclpy.spin_once(minimal_publisher)
+       # rclpy.spin_once(minimal_publisher)
         # Update arm plot
         x_3, y_3, x_4, y_4 = plotAngle(jointAngles)
         arm.set_data([0, x_3, x_4], [0, y_3, y_4])
