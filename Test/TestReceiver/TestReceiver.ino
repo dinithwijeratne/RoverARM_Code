@@ -7,7 +7,7 @@ void setup() {
     delay(15);
   }
   pinMode(25, OUTPUT);
-  digtialWrite(25, LOW); 
+  digitalWrite(25, LOW); 
   delay(150); 
   digitalWrite(25, HIGH); 
   delay(500); 
@@ -19,9 +19,9 @@ void loop() {
   if (Serial.available()) {
     String data = Serial.readStringUntil('\n');
     if (data == "A,0,0,0,0,0,0") {  // What we want
-      digitalWrite(25, HIGH)
+      digitalWrite(25, HIGH);
     }else{ //IK will change thats how we know it works 
-      digitalWrite(25, LOW) 
+      digitalWrite(25, LOW);
     }
   }
 }
