@@ -148,6 +148,8 @@ def main():
             motorSpeed = 0 
             motorDir = 2  
 
+        wrist = np.clip(wrist, 0, np.pi)
+        
         target_plot.set_data([target[0]], [target[1]])
         x_1, y_1, x_2, y_2 = plotAngle(jointAngles)
         ray_x, ray_y, claw_x, claw_y = plot_wrist(wrist, claw)
