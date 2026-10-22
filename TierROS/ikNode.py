@@ -98,6 +98,8 @@ def main():
     target_plot, = ax.plot(target[0], target[1], 'rx', markersize=8)
 
     arm, = ax.plot([], [], 'o-', color='green', markersize=5, linewidth=2)
+    wrist_ray, = ax.plot([], [], 'b-', linewidth=2)
+    claw_line, = ax.plot([], [], 'r-', linewidth=3)
 
     x_s1, y_s1, x_s2, y_s2 = plotAngle(jointAngles)
     arm.set_data([0, x_s1, x_s2], [0, y_s1, y_s2])
@@ -136,9 +138,9 @@ def main():
         if 'k' in keys: 
             wrist -= step
         if 'n' in keys: 
-            claw = min(180, claw + 1)
+            claw = min(180, claw + 3)
         if 'm' in keys: 
-            claw = max(0, claw - 1)
+            claw = max(0, claw - 3)
         if ',' in keys: 
             claw = min(180, claw + 5)
         if '.' in keys: 
