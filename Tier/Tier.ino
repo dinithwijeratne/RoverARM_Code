@@ -275,8 +275,8 @@ void absMotorControl(String data) {
   }
 
   if (motorDirection == 2) {
-    digitalWrite(MotorINT1, HIGH);
-    digitalWrite(MotorINT2, HIGH);
+    digitalWrite(MotorINT1, LOW);
+    digitalWrite(MotorINT2, LOW);
     analogWrite(MotorPWM, 0);
   } else {
     analogWrite(MotorPWM, motorSpeed);
