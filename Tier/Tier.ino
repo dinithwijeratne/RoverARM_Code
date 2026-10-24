@@ -53,26 +53,49 @@ Adafruit_BMP3XX bmp;
 void setup() {
   Serial.begin(115200);
   delay(1000);
-  pinMode(25, OUTPUT); 
+  pinMode(25, OUTPUT);
+  pinMode(MotorINT1, OUTPUT);
+  pinMode(MotorINT2, OUTPUT);
+  pinMode(MotorPWM, OUTPUT);
 
 
   SPI.begin();
 
   if (!SD.begin(SD_CS)) {
     Serial.println("SD initialization failed!");
-
+    digitalWrite(25, HIGH);
+    delay(250);
+    digitalWrite(25, LOW);
+    delay(250);
+    digitalWrite(25, HIGH);
+    delay(250);
+    digitalWrite(25, LOW);
   }
+
 
   /* Initialise the sensor */
   if (!bno.begin()) {
     /* There was a problem detecting the BNO055 ... check your connections */
     Serial.print("Ooops, no BNO055 detected ... Check your wiring or I2C ADDR!");
-
+    digitalWrite(25, HIGH);
+    delay(250);
+    digitalWrite(25, LOW);
+    delay(250);
+    digitalWrite(25, HIGH);
+    delay(250);
+    digitalWrite(25, LOW);
   }
   if (!bmp.begin_I2C()) {  // hardware I2C mode, can pass in address & alt Wire
                            //if (! bmp.begin_SPI(BMP_CS)) {  // hardware SPI mode
                            //if (! bmp.begin_SPI(BMP_CS, BMP_SCK, BMP_MISO, BMP_MOSI)) {  // software SPI mode
     Serial.println("Could not find a valid BMP3 sensor, check wiring!");
+    digitalWrite(25, HIGH);
+    delay(250);
+    digitalWrite(25, LOW);
+    delay(250);
+    digitalWrite(25, HIGH);
+    delay(250);
+    digitalWrite(25, LOW);
   }
 
 
@@ -84,11 +107,11 @@ void setup() {
 
 
 
-  digitalWrite(25, HIGH); 
+  digitalWrite(25, HIGH);
 
   s1.attach(8);  // attaches the servo on GIO2 to the servo object NORMALLY 8
   s2.attach(9);
-  s3.attach(10);  // NORMALLY 10
+  s3.attach(10,400, 2600);  // NORMALLY 10
   s4.attach(11);
   int pos;
 
@@ -125,7 +148,7 @@ void setup() {
     Serial.print("POS: ");
     Serial.println(pos);
   }
-  digitalWrite(25, LOW); 
+  digitalWrite(25, LOW);
 }
 
 void loop() {
@@ -263,7 +286,7 @@ void absMotorControl(String data) {
   int motorDirection = values[1];                 //1 is left 0 is right 2 is Force STOP
   int S1 = constrain(values[2], 0, 180);
   int S2 = constrain(values[3], 0, 180);
-  int S3 = constrain(values[4], 0, 180);
+  int S3 = constrain(values[4], 10, 180);
   int S4 = constrain(values[5], 0, 180);
 
   if (motorDirection == 1) {
