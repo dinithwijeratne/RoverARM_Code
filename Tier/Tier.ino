@@ -111,7 +111,7 @@ void setup() {
 
   s1.attach(8);  // attaches the servo on GIO2 to the servo object NORMALLY 8
   s2.attach(9);
-  s3.attach(10,400, 2600);  // NORMALLY 10
+  s3.attach(10, 400, 2600);  // NORMALLY 10
   s4.attach(11);
   int pos;
 
@@ -121,7 +121,9 @@ void setup() {
     delay(30);      // waits 15ms for the servo to reach the position
     s2.write(pos);
     delay(30);
-    s3.write(pos);
+    if (pos > 90) {
+      s3.write(pos);
+    }
     delay(15);
     s4.write(pos);
     delay(15);

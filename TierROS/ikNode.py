@@ -18,11 +18,11 @@ l_1 = 4.764
 l_2 = 4.773
 fixed = np.array([0.0, 0.0])
 
-a = 0.02
+a = 0.05
 l_a = 0.05
 
 
-offset1 = -10 # Axis 1 
+offset1 = 30 # Axis 1 
 offset2 = 175 # Axis 2 
 offset3 = 0 # wrist 
 offset4 = 0  # claw degrees
@@ -66,7 +66,7 @@ def plot_wrist(wrist_angle, claw):
     cx = -10
     cy = -10
 
-    claw_half = claw / 50
+    claw_half = (180-claw) / 50
 
     dx = np.cos(0) * claw_half
 
@@ -79,7 +79,7 @@ def main():
     motorSpeed = 0 
     motorDir = 2 # 0 is left 1 is right 2 is stop 
     wrist = np.pi/2 
-    claw = 0 
+    claw = 180 
     for key in mpl.rcParams:
         if key.startswith('keymap.'):
             mpl.rcParams[key] = []
@@ -194,7 +194,7 @@ def main():
             return
 
         button.label.set_text("Running")
-        ani = FuncAnimation(fig, update, frames=3000, interval=40, repeat=False)
+        ani = FuncAnimation(fig, update, interval=40, repeat=False)
         fig.canvas.draw_idle()
     rclpy.init(args=None)
     
